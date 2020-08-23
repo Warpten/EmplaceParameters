@@ -8,10 +8,11 @@ using System.Text;
 using System.Threading.Tasks;
 using ClangSharp.Interop;
 using EmplaceParameters.Extensions;
+using Type = System.Type;
 
 namespace EmplaceParameters.Parsing
 {
-    public sealed class EmplaceVisitor : TranslationUnitVisitor
+    public sealed class EmplaceVisitor : Visitor
     {
         private string _filePath;
         private int _line;
@@ -98,12 +99,57 @@ namespace EmplaceParameters.Parsing
                 {
                     foreach (var constructor in recordDecl.Ctors)
                         NotifyConstructorFound(methodReference.Spelling, constructor);
+
+                    // Also search for function template ctors
+                    var functionTemplates = recordDecl.CursorChildren.Where(child => child.CursorKind == CXCursorKind.CXCursor_FunctionTemplate);
+                    foreach (var functionTemplate in functionTemplates.Cast<FunctionTemplateDecl>())
+                    {
+                        // Only keep template ctors
+                        if (functionTemplate.Spelling != resolvedElementType.Spelling)
+                            continue;
+
+                        NotifyConstructorFound(methodReference.Spelling, functionTemplate);
+                    }
                     break;
                 }
                 default: // Could be a builtin
                     Debug.WriteLine($"> Found an emplace call to a container with an unhandled {resolvedElementType.CursorKindSpelling}.");
                     break;
             }
+        }
+
+        private void NotifyConstructorFound(string methodName, FunctionTemplateDecl functionTemplate)
+        {
+            var parameters = new List<Parameter>();
+
+            var defaultValueConstructorShown = false;
+
+            var methodNameBuilder = new StringBuilder(methodName);
+            methodNameBuilder.Append('<');
+            foreach (var parameterType in functionTemplate.TemplateParameters)
+                methodNameBuilder.Append(parameterType.Spelling).Append(", ");
+            methodNameBuilder.Length -= 2;
+            methodNameBuilder.Append('>');
+
+            methodName = methodNameBuilder.ToString();
+
+            foreach (var child in functionTemplate.CursorChildren.Where(child => child.CursorKind == CXCursorKind.CXCursor_ParmDecl))
+            {
+                var parameterDeclaration = child.As<ParmVarDecl>();
+                var parameter = new Parameter(parameterDeclaration);
+                if (!defaultValueConstructorShown && parameterDeclaration.HasDefaultArg)
+                {
+                    // As soon as a default parameter is found all following parameters are defaulted
+                    // Which means that there's an extra "pseudo" constructor without all defaulted parameters
+                    CtorFound?.Invoke(methodName, parameters);
+                    defaultValueConstructorShown = true;
+                }
+
+                parameters.Add(parameter);
+            }
+
+            CtorFound?.Invoke(methodName, parameters);
+
         }
 
         private void NotifyConstructorFound(string methodName, CXXConstructorDecl constructor)

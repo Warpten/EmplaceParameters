@@ -57,12 +57,12 @@
     <Compile Include="Emplace\Signatures\Parameter.cs" />
     <Compile Include="Emplace\Signatures\Signature.cs" />
     <Compile Include="Emplace\Signatures\SignatureHelpSource.cs" />
-    <Compile Include="Extensions\LINQExtensions.cs" />
+    <Compile Include="Extensions\LinqExtensions.cs" />
     <Compile Include="Extensions\ServiceExtensions.cs" />
     <Compile Include="Parsing\EmplaceVisitor.cs" />
     <Compile Include="Parsing\ObjectConstructor.cs" />
-    <Compile Include="Parsing\ParsingExtensions.cs" />
-    <Compile Include="Parsing\TranslationUnitVisitor.cs" />
+    <Compile Include="Extensions\ParsingExtensions.cs" />
+    <Compile Include="Parsing\Visitor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="EmplaceParametersPackage.cs" />
   </ItemGroup>

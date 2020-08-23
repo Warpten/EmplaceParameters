@@ -17,36 +17,10 @@ using System.Threading.Tasks;
 using EmplaceParameters.Emplace.Signatures;
 using Microsoft.VisualStudio.Language.Intellisense;
 
-namespace EmplaceParameters.Parsing
+namespace EmplaceParameters.Extensions
 {
     internal static class ParsingExtensions
     {
-        public static bool TryParseSource(this string filePath, CXIndex index, out TranslationUnit unit, out List<CXDiagnostic> diagnostics)
-        {
-            diagnostics = new List<CXDiagnostic>();
-            unit = default;
-
-            var translationError = CXTranslationUnit.TryParse(index,
-                filePath, null, null,
-                CXTranslationUnit_Flags.CXTranslationUnit_KeepGoing,
-                out var translationHandle);
-
-            if (translationError != CXErrorCode.CXError_Success)
-                return false;
-
-            if (translationHandle.NumDiagnostics != 0)
-            {
-                for (var i = 0u; i < translationHandle.NumDiagnostics; ++i)
-                {
-                    var diagnostic = translationHandle.GetDiagnostic(i);
-                    diagnostics.Add(diagnostic);
-                }
-            }
-
-            unit = TranslationUnit.GetOrCreate(translationHandle);
-            return unit != default;
-        }
-
         public static bool TryParseDocument(this (Document document, ITextSnapshot textSnapshot) tuple, CXIndex index,
             out TranslationUnit unit, out List<CXDiagnostic> diagnostics)
         {
