@@ -50,7 +50,6 @@ namespace EmplaceParameters.Emplace.Signatures.Command
 
                     if (word.Equals("emplace") || word.Equals("emplace_back"))
                         _session = _broker.TriggerSignatureHelp(_textView);
-
                 }
                 else if (typedChar.Equals(')') && _session != null)
                 {

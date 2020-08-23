@@ -57,7 +57,7 @@ namespace EmplaceParameters.Parsing
 
         static Visitor()
         {
-            Action<Visitor, TBase> createLambda<TBase>(System.Type parameterType, MethodInfo methodInfo)
+            static Action<Visitor, TBase> createLambda<TBase>(System.Type parameterType, MethodInfo methodInfo)
             {
                 var visitorParam = LinqExpr.Parameter(typeof(Visitor), "visitor");
                 var objectParam = LinqExpr.Parameter(typeof(TBase), "obj");

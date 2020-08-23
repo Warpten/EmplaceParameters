@@ -59,8 +59,7 @@
     <Compile Include="Emplace\Signatures\SignatureHelpSource.cs" />
     <Compile Include="Extensions\LinqExtensions.cs" />
     <Compile Include="Extensions\ServiceExtensions.cs" />
-    <Compile Include="Parsing\EmplaceVisitor.cs" />
-    <Compile Include="Parsing\ObjectConstructor.cs" />
+    <Compile Include="Parsing\EmplacingVisitor.cs" />
     <Compile Include="Extensions\ParsingExtensions.cs" />
     <Compile Include="Parsing\Visitor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

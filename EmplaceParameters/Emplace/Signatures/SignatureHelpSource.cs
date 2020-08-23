@@ -56,12 +56,12 @@ namespace EmplaceParameters.Emplace.Signatures
             var index = CXIndex.Create(false, false);
             if ((_dte.ActiveDocument, snapshot).TryParseDocument(index, out var translationUnit, out _)) 
             {
-                var visitor = new EmplaceVisitor(_dte.ActiveDocument.FullName, snapshotPoint.GetContainingLine().LineNumber);
-                visitor.CtorFound += (methodName, parameters) =>
+                var visitor = new EmplacingVisitor(_dte.ActiveDocument.FullName, snapshotPoint.GetContainingLine().LineNumber);
+                visitor.CtorFound += (templateParameters, parameters) =>
                 {
                     // TODO: eliminate this stupid back-and-forth string handling
 
-                    var signatureBuilder = new StringBuilder(methodName);
+                    var signatureBuilder = new StringBuilder("emplace");
                     signatureBuilder.Append('(');
                     foreach (var parameter in parameters)
                         signatureBuilder.Append(parameter.Type).Append(' ').Append(parameter.Name).Append(", ");
